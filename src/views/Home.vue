@@ -41,10 +41,42 @@
             <td>{{ user["firstName"] }}</td>
             <td>{{ user["lastName"] }}</td>
             <td>{{ user["userName"] }}</td>
-            <td>{{ user["currentQuestion"] }}</td>
+            <td>{{ user["currentQuestion"] - 1}}</td>
             <td>{{ user["true_answer"] }}</td>
             <td>{{ user["false_answer"] }}</td>
             <td>{{ user["status"] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Викторину закончили:</h3>
+    <div class="table-responsive">
+      <table class="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Telegram ID</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Username</th>
+            <th>Текущий вопрос</th>
+            <th>Правильных ответов</th>
+            <th>Неправильных ответов</th>
+            <th>Время</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(user, index) in quizEndUsers" :key="user">
+            <td>{{ index + 1 }}</td>
+            <td>{{ user["telegramId"] }}</td>
+            <td>{{ user["firstName"] }}</td>
+            <td>{{ user["lastName"] }}</td>
+            <td>{{ user["userName"] }}</td>
+            <td>{{ user["currentQuestion"] - 1 }}</td>
+            <td>{{ user["true_answer"] }}</td>
+            <td>{{ user["false_answer"] }}</td>
+            <td>0 сек.</td>
           </tr>
         </tbody>
       </table>
@@ -61,13 +93,29 @@ export default {
   data() {
     return {
       users: [],
+      quizEndUsers: []
     };
   },
   async mounted() {
-    const q = query(collection(db, "users"), where("status", "!=", "Закончил викторину"));
-    onSnapshot(q, (querySnapshot) => {
+    // Получение пользователей
+    const users = query(
+      collection(db, "users"),
+      where("status", "!=", "Закончил викторину")
+    );
+    onSnapshot(users, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        this.users.push(doc.data())
+        this.users.push(doc.data());
+      });
+    });
+
+    // Получение пользователей, которые закончили викторину
+    const quizEndUsers = query(
+      collection(db, "users"),
+      where("status", "==", "Закончил викторину")
+    );
+    onSnapshot(quizEndUsers, (querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        this.quizEndUsers.push(doc.data());
       });
     });
   },
