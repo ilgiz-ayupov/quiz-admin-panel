@@ -28,18 +28,48 @@
             <th>Имя</th>
             <th>Фамилия</th>
             <th>Username</th>
+            <th>Текущий вопрос</th>
+            <th>Правильных ответов</th>
+            <th>Неправильных ответов</th>
+            <th>Статус</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1,001</td>
-            <td>random</td>
-            <td>data</td>
-            <td>placeholder</td>
-            <td>text</td>
+          <tr v-for="(user, index) in users" :key="user">
+            <td>{{ index + 1 }}</td>
+            <td>{{ user["telegramId"] }}</td>
+            <td>{{ user["firstName"] }}</td>
+            <td>{{ user["lastName"] }}</td>
+            <td>{{ user["userName"] }}</td>
+            <td>{{ user["currentQuestion"] }}</td>
+            <td>{{ user["true_answer"] }}</td>
+            <td>{{ user["false_answer"] }}</td>
+            <td>{{ user["status"] }}</td>
           </tr>
         </tbody>
       </table>
     </div>
   </main>
 </template>
+
+
+<script>
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "@/main.js";
+
+export default {
+  data() {
+    return {
+      users: [],
+    };
+  },
+  async mounted() {
+    const q = query(collection(db, "users"), where("status", "!=", "Закончил викторину"));
+    onSnapshot(q, (querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        this.users.push(doc.data())
+      });
+    });
+  },
+};
+</script>

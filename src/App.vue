@@ -4,7 +4,17 @@
     <div class="container-fluid">
       <div class="row">
         <Nav />
+
+
+
+
         <router-view />
+
+
+
+
+
+
       </div>
     </div>
   </div>

@@ -6,7 +6,7 @@
     <div class="position-sticky pt-3">
       <ul class="nav flex-column">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">
+          <router-link to="/" aria-current="page" href="#">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -23,10 +23,10 @@
               <polyline points="9 22 9 12 15 12 15 22"></polyline>
             </svg>
             Главная страница
-          </a>
+          </router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">
+          <router-link to="/question-list" aria-current="page" href="#">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -48,9 +48,18 @@
               <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
             Список вопросов
-          </a>
+          </router-link>
         </li>
       </ul>
     </div>
   </nav>
 </template>
+
+
+<style scoped>
+  a {
+    display: block;
+    margin: 0.5rem 0 0.5rem 0;
+    text-decoration: none;
+  }
+</style>
