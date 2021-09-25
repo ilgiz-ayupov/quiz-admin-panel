@@ -40,7 +40,7 @@
             <td>{{ user["telegramId"] }}</td>
             <td>{{ user["firstName"] }}</td>
             <td>{{ user["lastName"] }}</td>
-            <td>{{ user["userName"] }}</td>
+            <td>@{{ user["userName"] }}</td>
             <td>{{ user["currentQuestion"] - 1}}</td>
             <td>{{ user["true_answer"] }}</td>
             <td>{{ user["false_answer"] }}</td>
@@ -72,7 +72,7 @@
             <td>{{ user["telegramId"] }}</td>
             <td>{{ user["firstName"] }}</td>
             <td>{{ user["lastName"] }}</td>
-            <td>{{ user["userName"] }}</td>
+            <td>@{{ user["userName"] }}</td>
             <td>{{ user["currentQuestion"] - 1 }}</td>
             <td>{{ user["true_answer"] }}</td>
             <td>{{ user["false_answer"] }}</td>
@@ -104,7 +104,19 @@ export default {
     );
     onSnapshot(users, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        this.users.push(doc.data());
+        let found = false
+        for(let i = 0; i < this.users.length; i++){
+          console.log("IF", this.users[i]["telegramId"] == doc.id);
+          if(this.users[i]["telegramId"] == doc.id){
+            found = true
+            this.users[i] =  doc.data()
+          }
+        }
+        if(!found){
+          console.log("FOUND", "FALSE");
+          this.users.push(doc.data());
+        }
+        this.users.sort((user) => user["true_answer"])
       });
     });
 
@@ -116,6 +128,7 @@ export default {
     onSnapshot(quizEndUsers, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
         this.quizEndUsers.push(doc.data());
+        this.quizEndUsers.sort((user) => user["true_answer"])
       });
     });
   },
