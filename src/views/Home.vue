@@ -41,7 +41,7 @@
             <td>{{ user["firstName"] }}</td>
             <td>{{ user["lastName"] }}</td>
             <td>@{{ user["userName"] }}</td>
-            <td>{{ user["currentQuestion"] - 1}}</td>
+            <td>{{ user["currentQuestion"] - 1 }}</td>
             <td>{{ user["true_answer"] }}</td>
             <td>{{ user["false_answer"] }}</td>
             <td>{{ user["status"] }}</td>
@@ -76,7 +76,7 @@
             <td>{{ user["currentQuestion"] - 1 }}</td>
             <td>{{ user["true_answer"] }}</td>
             <td>{{ user["false_answer"] }}</td>
-            <td>0 сек.</td>
+            <td>{{ user["durationQuiz"] }}</td>
           </tr>
         </tbody>
       </table>
@@ -93,7 +93,7 @@ export default {
   data() {
     return {
       users: [],
-      quizEndUsers: []
+      quizEndUsers: [],
     };
   },
   async mounted() {
@@ -104,19 +104,17 @@ export default {
     );
     onSnapshot(users, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        let found = false
-        for(let i = 0; i < this.users.length; i++){
-          console.log("IF", this.users[i]["telegramId"] == doc.id);
-          if(this.users[i]["telegramId"] == doc.id){
-            found = true
-            this.users[i] =  doc.data()
+        let found = false;
+        for (let i = 0; i < this.users.length; i++) {
+          if (this.users[i]["telegramId"] == doc.id) {
+            found = true;
+            this.users[i] = doc.data();
           }
         }
-        if(!found){
-          console.log("FOUND", "FALSE");
+        if (!found) {
           this.users.push(doc.data());
         }
-        this.users.sort((user) => user["true_answer"])
+        this.users.sort((user) => user["true_answer"]);
       });
     });
 
@@ -127,8 +125,19 @@ export default {
     );
     onSnapshot(quizEndUsers, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        this.quizEndUsers.push(doc.data());
-        this.quizEndUsers.sort((user) => user["true_answer"])
+        let found = false;
+        for (let i = 0; i < this.quizEndUsers.length; i++) {
+          if (this.quizEndUsers[i]["telegramId"] == doc.id) {
+            found = true;
+            this.quizEndUsers = this.quizEndUsers.filter((user) => {user["status"] == "Закончил викторину"})
+            this.quizEndUsers[i] = doc.data();
+          }
+        }
+        if (!found) {
+          this.users = this.users.filter((user) => {user["telegramId"] != doc.id})
+          this.quizEndUsers.push(doc.data());
+        }
+        this.quizEndUsers.sort((user) => user["true_answer"]);
       });
     });
   },
