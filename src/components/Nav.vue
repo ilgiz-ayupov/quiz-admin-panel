@@ -50,8 +50,8 @@
             Список вопросов
           </router-link>
         </li>
-        <hr>
-        <li class="nav-item">
+        <hr />
+        <li class="nav-item" v-if="!checkUser">
           <router-link to="/register" aria-current="page" href="#">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -73,10 +73,10 @@
               <line x1="16" y1="17" x2="8" y2="17"></line>
               <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
-                Регистрация
+            Регистрация
           </router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" v-if="!checkUser">
           <router-link to="/login" aria-current="page" href="#">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +98,7 @@
               <line x1="16" y1="17" x2="8" y2="17"></line>
               <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
-                Вход
+            Вход
           </router-link>
         </li>
       </ul>
@@ -107,10 +107,19 @@
 </template>
 
 
+<script>
+import { checkUser } from "@/auth.js";
+export default {
+  methods: {
+    checkUser
+  },
+};
+</script>
+
 <style scoped>
-  a {
-    display: block;
-    margin: 0.5rem 0 0.5rem 0;
-    text-decoration: none;
-  }
+a {
+  display: block;
+  margin: 0.5rem 0 0.5rem 0;
+  text-decoration: none;
+}
 </style>
