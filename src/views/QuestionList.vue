@@ -129,9 +129,15 @@
 
 
 <script>
-import { collection, getDocs, setDoc, deleteDoc, doc } from "firebase/firestore";
-import { ref, uploadBytes } from "firebase/storage";
-import { db, storage } from "@/main.js";
+import {
+  collection,
+  getDocs,
+  setDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { db } from "@/main.js";
 import TableQuestionItem from "@/components/TableQuestionItem";
 
 export default {
@@ -192,10 +198,16 @@ export default {
       let value = e.target.value;
       this.answerOptionOne = value;
     },
-    async previewFiles(e) {
+    previewFiles(e) {
       let image = e.target.files[0];
-      const storageRef = ref(storage, `${image.name}`);
-      await uploadBytes(storageRef, image);
+      const storage = getStorage();
+      const storageRef = ref(storage, `images/${image.name}`);
+
+      // 'file' comes from the Blob or File API
+      uploadBytes(storageRef, image).then((snapshot) => {
+        console.log(snapshot);
+        console.log("Uploaded a blob or file!");
+      });
     },
   },
   components: {

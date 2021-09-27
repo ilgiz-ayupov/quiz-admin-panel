@@ -2,8 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from "./router"
 import { initializeApp } from "firebase/app"
+import { initializeAppCheck, ReCaptchaV3Provider } from '@firebase/app-check'
 import { getFirestore } from "firebase/firestore"
-import { getStorage } from "firebase/storage"
 
 Vue.config.productionTip = false
 const firebaseApp = initializeApp({
@@ -15,12 +15,16 @@ const firebaseApp = initializeApp({
   appId: "1:988345778879:web:6c8966f91d1dffaccb7c0a"
 })
 
+initializeAppCheck(firebaseApp, {
+  provider: new ReCaptchaV3Provider("6Ldh3JMcAAAAAHzyLoo95aIaenDgUJNOlbvfkhGx"),
+  isTokenAutoRefreshEnabled: true
+})
+
 self.FIREBASE_APPCHECK_DEBUG_TOKEN = true
 import "firebase/app-check"
 
 const db = getFirestore(firebaseApp)
-const storage = getStorage(firebaseApp)
-export {db, storage}
+export { db }
 
 new Vue({
   router,
