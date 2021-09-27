@@ -186,7 +186,7 @@ export default {
     },
     async removeQuestion(index) {
       this.questions = this.questions.filter(
-        (q) => index != this.questions.indexOf(q)
+        (q) => index != this.questions.indexOf(q) + 1
       );
       await deleteDoc(doc(db, "questions"));
     },

@@ -102,8 +102,10 @@ export default {
         if (!found) {
           this.users.push(doc.data());
         }
-        this.users.sort((user) => user["true_answer"]);
       });
+      this.users = this.users
+            .sort((a, b) => a.true_answer - b.true_answer)
+            .reverse();
     });
 
     // Получение пользователей, которые закончили викторину
@@ -128,8 +130,10 @@ export default {
             user["telegramId"] != doc.id;
           });
           this.quizEndUsers.push(doc.data());
+          this.quizEndUsers = this.quizEndUsers
+            .sort((a, b) => a.true_answer - b.true_answer)
+            .reverse();
         }
-        this.quizEndUsers.sort((user) => user.true_answer);
       });
     });
   },

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from "./router"
 import { initializeApp } from "firebase/app"
-import { initializeAppCheck, ReCaptchaV3Provider } from '@firebase/app-check'
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 import { getFirestore } from "firebase/firestore"
 
 Vue.config.productionTip = false
@@ -19,6 +19,7 @@ initializeAppCheck(firebaseApp, {
   provider: new ReCaptchaV3Provider("6LfjyJMcAAAAAAs5T_HmbFk8YsCEOjHwxJij8Icj"),
   isTokenAutoRefreshEnabled: true
 })
+
 
 const db = getFirestore(firebaseApp)
 export { db }
