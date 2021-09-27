@@ -6,4 +6,5 @@ app = express()
 app.use(serveStatic(path.join(__dirname, 'src')))
 
 const port = process.env.PORT || 3000
+console.log("Сервер запушен на порту: " + port);
 app.listen(port)
