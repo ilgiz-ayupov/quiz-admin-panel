@@ -20,9 +20,6 @@ initializeAppCheck(firebaseApp, {
   isTokenAutoRefreshEnabled: true
 })
 
-self.FIREBASE_APPCHECK_DEBUG_TOKEN = true
-import "firebase/app-check"
-
 const db = getFirestore(firebaseApp)
 export { db }
 

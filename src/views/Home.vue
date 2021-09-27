@@ -1,9 +1,5 @@
 <template>
-  <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-    <div class="chartjs-size-monitor">
-      <div class="chartjs-size-monitor-expand"><div class=""></div></div>
-      <div class="chartjs-size-monitor-shrink"><div class=""></div></div>
-    </div>
+  <div>
     <div
       class="
         d-flex
@@ -35,15 +31,12 @@
           </tr>
         </thead>
         <tbody>
-          
-
-          <TableUserItem v-for="(user, index) in users" 
+          <TableUserItem
+            v-for="(user, index) in users"
             :key="index"
             :user="user"
             :index="index"
           />
-
-
         </tbody>
       </table>
     </div>
@@ -65,15 +58,16 @@
           </tr>
         </thead>
         <tbody>
-          <TableQuizEndUserItem v-for="(user, index) in quizEndUsers" 
-          :key="index"
-          :user="user"
-          :index="index"
+          <TableQuizEndUserItem
+            v-for="(user, index) in quizEndUsers"
+            :key="index"
+            :user="user"
+            :index="index"
           />
         </tbody>
       </table>
     </div>
-  </main>
+  </div>
 </template>
 
 
@@ -141,8 +135,8 @@ export default {
   },
   components: {
     TableUserItem,
-    TableQuizEndUserItem
-  }
+    TableQuizEndUserItem,
+  },
 };
 </script>
 
