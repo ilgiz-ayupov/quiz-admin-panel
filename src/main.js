@@ -15,6 +15,9 @@ const firebaseApp = initializeApp({
   appId: "1:988345778879:web:6c8966f91d1dffaccb7c0a"
 })
 
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = true
+import "firebase/app-check"
+
 const db = getFirestore(firebaseApp)
 const storage = getStorage(firebaseApp)
 export {db, storage}

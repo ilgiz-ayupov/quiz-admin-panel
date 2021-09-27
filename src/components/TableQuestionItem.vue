@@ -5,7 +5,7 @@
     <td>{{ question.answer }}</td>
     <td>{{ question.answer_options }}</td>
     <td>
-      <button class="btn btn-danger" @click="removeQuestion(index)">
+      <button class="btn btn-danger" @click="$emit('removeQuestion', index)">
         Удалить
       </button>
     </td>
@@ -14,6 +14,6 @@
 
 <script>
 export default {
-    props: ["index", "question"]
-}
+  props: ["index", "question"]
+};
 </script>

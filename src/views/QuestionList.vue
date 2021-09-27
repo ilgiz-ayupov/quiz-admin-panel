@@ -108,6 +108,7 @@
             :key="index"
             :index="index"
             :question="question"
+            @removeQuestion="removeQuestion"
           />
         </tbody>
       </table>
@@ -128,13 +129,7 @@
 
 
 <script>
-import {
-  collection,
-  getDocs,
-  setDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { collection, getDocs, setDoc, deleteDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "@/main.js";
 import TableQuestionItem from "@/components/TableQuestionItem";
@@ -156,6 +151,7 @@ export default {
     const query = await getDocs(collection(db, "questions"));
     query.forEach((doc) => {
       this.questions.push(doc.data());
+      console.log(this.questions);
     });
   },
   methods: {
@@ -193,16 +189,16 @@ export default {
       this.questions = this.questions.filter(
         (q) => index != this.questions.indexOf(q)
       );
-      await deleteDoc(doc(db, "questions", String(index)));
+      await deleteDoc(doc(db, "questions"));
+    },
+    changeAnswerInput(e) {
+      let value = e.target.value;
+      this.answerOptionOne = value;
     },
     async previewFiles(e) {
       let image = e.target.files[0];
       const storageRef = ref(storage, `$images/${image.name}`);
       await uploadBytes(storageRef, image);
-    },
-    changeAnswerInput(e) {
-      let value = e.target.value;
-      this.answerOptionOne = value;
     },
   },
   components: {
