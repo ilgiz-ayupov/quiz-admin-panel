@@ -35,17 +35,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(user, index) in users" :key="user">
-            <td>{{ index + 1 }}</td>
-            <td>{{ user["telegramId"] }}</td>
-            <td>{{ user["firstName"] }}</td>
-            <td>{{ user["lastName"] }}</td>
-            <td>@{{ user["userName"] }}</td>
-            <td>{{ user["currentQuestion"] - 1 }}</td>
-            <td>{{ user["true_answer"] }}</td>
-            <td>{{ user["false_answer"] }}</td>
-            <td>{{ user["status"] }}</td>
-          </tr>
+          
+
+          <TableUserItem v-for="(user, index) in users" 
+            :key="index"
+            :user="user"
+            :index="index"
+          />
+
+
         </tbody>
       </table>
     </div>
@@ -67,17 +65,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(user, index) in quizEndUsers" :key="user">
-            <td>{{ index + 1 }}</td>
-            <td>{{ user["telegramId"] }}</td>
-            <td>{{ user["firstName"] }}</td>
-            <td>{{ user["lastName"] }}</td>
-            <td>@{{ user["userName"] }}</td>
-            <td>{{ user["currentQuestion"] - 1 }}</td>
-            <td>{{ user["true_answer"] }}</td>
-            <td>{{ user["false_answer"] }}</td>
-            <td>{{ user["durationQuiz"] }}</td>
-          </tr>
+          <TableQuizEndUserItem v-for="(user, index) in quizEndUsers" 
+          :key="index"
+          :user="user"
+          :index="index"
+          />
         </tbody>
       </table>
     </div>
@@ -88,6 +80,8 @@
 <script>
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/main.js";
+import TableUserItem from "@/components/TableUserItem.vue";
+import TableQuizEndUserItem from "@/components/TableQuizEndUserItem.vue";
 
 export default {
   data() {
@@ -129,17 +123,36 @@ export default {
         for (let i = 0; i < this.quizEndUsers.length; i++) {
           if (this.quizEndUsers[i]["telegramId"] == doc.id) {
             found = true;
-            this.quizEndUsers = this.quizEndUsers.filter((user) => {user["status"] == "Закончил викторину"})
+            this.quizEndUsers = this.quizEndUsers.filter((user) => {
+              user["status"] == "Закончил викторину";
+            });
             this.quizEndUsers[i] = doc.data();
           }
         }
         if (!found) {
-          this.users = this.users.filter((user) => {user["telegramId"] != doc.id})
+          this.users = this.users.filter((user) => {
+            user["telegramId"] != doc.id;
+          });
           this.quizEndUsers.push(doc.data());
         }
-        this.quizEndUsers.sort((user) => user["true_answer"]);
+        this.quizEndUsers.sort((user) => user.true_answer);
       });
     });
   },
+  components: {
+    TableUserItem,
+    TableQuizEndUserItem
+  }
 };
 </script>
+
+<style scoped>
+h3 {
+  margin-top: 80px;
+}
+
+.statusСircle {
+  width: 20px;
+  height: 20px;
+}
+</style>

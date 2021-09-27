@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from "./router"
 import { initializeApp } from "firebase/app"
 import { getFirestore } from "firebase/firestore"
+import { getStorage } from "firebase/storage"
 
 Vue.config.productionTip = false
 const firebaseApp = initializeApp({
@@ -15,7 +16,8 @@ const firebaseApp = initializeApp({
 })
 
 const db = getFirestore(firebaseApp)
-export {db}
+const storage = getStorage(firebaseApp)
+export {db, storage}
 
 new Vue({
   router,

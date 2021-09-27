@@ -38,6 +38,18 @@
             class="form-control"
             id="answerId"
             v-model="answer"
+            @input="changeAnswerInput"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="image" class="form-label">Картинка</label>
+          <input
+            type="file"
+            accept=".png, .jpg, .jpeg"
+            name="image"
+            class="form-control"
+            id="image"
+            @change="previewFiles"
           />
         </div>
         <div class="mb-3">
@@ -48,7 +60,7 @@
               name="answerOptions"
               class="form-control"
               id="optionsId"
-              v-model="answerOptionOne"
+              :value="answerOptionOne"
             />
             <input
               type="type"
@@ -70,7 +82,11 @@
             />
           </div>
         </div>
-        <button class="btn btn-success" @click.prevent="addQuestion" @keydown.enter="addQuestion">
+        <button
+          class="btn btn-success"
+          @click.prevent="addQuestion"
+          @keydown.enter="addQuestion"
+        >
           Добавить
         </button>
       </form>
@@ -87,12 +103,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(question, index) in questions" :key="question">
-            <td>{{ index + 1 }}</td>
-            <td>{{ question.question }}</td>
-            <td>{{ question.answer }}</td>
-            <td>{{ question.answer_options }}</td>
-          </tr>
+          <TableQuestionItem
+            v-for="(question, index) in questions"
+            :key="index"
+            :index="index"
+            :question="question"
+          />
         </tbody>
       </table>
     </div>
@@ -112,8 +128,16 @@
 
 
 <script>
-import { collection, getDocs, addDoc } from "firebase/firestore";
-import { db } from "@/main.js";
+import {
+  collection,
+  getDocs,
+  setDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import { ref, uploadBytes } from "firebase/storage";
+import { db, storage } from "@/main.js";
+import TableQuestionItem from "@/components/TableQuestionItem";
 
 export default {
   data() {
@@ -121,6 +145,7 @@ export default {
       questions: [],
       question: "",
       answer: "",
+      image: "",
       answerOptionOne: "",
       answerOptionTwo: "",
       answerOptionThird: "",
@@ -139,6 +164,7 @@ export default {
       const newQuestion = {
         question: this.question,
         answer: this.answer,
+        image: this.image,
         answer_options: [
           this.answerOptionOne,
           this.answerOptionTwo,
@@ -146,19 +172,49 @@ export default {
           this.answerOptionFour,
         ],
       };
+      console.log(newQuestion);
       this.questions.push(newQuestion);
 
-      // Очистка переменных 
-      this.question = ""
-      this.answer = ""
-      this.answerOptionOne = ""
-      this.answerOptionTwo = ""
-      this.answerOptionThird = ""
-      this.answerOptionFour = ""
+      // Очистка переменных
+      this.question = "";
+      this.answer = "";
+      this.image = "";
+      this.answerOptionOne = "";
+      this.answerOptionTwo = "";
+      this.answerOptionThird = "";
+      this.answerOptionFour = "";
 
       // Добавление вопроса в БД
-      await addDoc(collection(db, "questions"), newQuestion);
+      let index = this.questions.length;
+      await setDoc(doc(db, "questions", String(index)), newQuestion);
     },
+    async removeQuestion(index) {
+      console.log(index);
+      this.questions = this.questions.filter(
+        (q) => index != this.questions.indexOf(q)
+      );
+      await deleteDoc(doc(db, "questions", String(index)));
+    },
+    async previewFiles(e) {
+      let image = e.target.files[0];
+      const storageRef = ref(storage, `$images/${image.name}`);
+      await uploadBytes(storageRef, image);
+    },
+    changeAnswerInput(e) {
+      let value = e.target.value;
+      this.answerOptionOne = value;
+    },
+  },
+  components: {
+    TableQuestionItem,
   },
 };
 </script> 
+
+
+<style scoped>
+td {
+  font-size: 18px;
+  padding: 15px 0;
+}
+</style>
