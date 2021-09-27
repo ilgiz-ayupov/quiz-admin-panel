@@ -151,7 +151,6 @@ export default {
     const query = await getDocs(collection(db, "questions"));
     query.forEach((doc) => {
       this.questions.push(doc.data());
-      console.log(this.questions);
     });
   },
   methods: {
@@ -168,7 +167,6 @@ export default {
           this.answerOptionFour,
         ],
       };
-      console.log(newQuestion);
       this.questions.push(newQuestion);
 
       // Очистка переменных
@@ -185,7 +183,6 @@ export default {
       await setDoc(doc(db, "questions", String(index)), newQuestion);
     },
     async removeQuestion(index) {
-      console.log(index);
       this.questions = this.questions.filter(
         (q) => index != this.questions.indexOf(q)
       );
@@ -197,7 +194,7 @@ export default {
     },
     async previewFiles(e) {
       let image = e.target.files[0];
-      const storageRef = ref(storage, `$images/${image.name}`);
+      const storageRef = ref(storage, `${image.name}`);
       await uploadBytes(storageRef, image);
     },
   },
