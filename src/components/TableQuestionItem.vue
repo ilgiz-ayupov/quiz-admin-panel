@@ -5,9 +5,6 @@
     <td>{{ question.answer }}</td>
     <td>{{ question.answer_options }}</td>
     <td>
-      <button class="btn btn-danger" @click="$emit('removeQuestion', index)">
-        Удалить
-      </button>
     </td>
   </tr>
 </template>

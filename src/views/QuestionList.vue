@@ -104,7 +104,6 @@
             :key="index"
             :index="index"
             :question="question"
-            @removeQuestion="removeQuestion"
           />
         </tbody>
       </table>
@@ -123,15 +122,9 @@
 }
 </style>
 
-
+<script src="https://www.google.com/recaptcha/api.js?render=6LeFlJ0cAAAAAO9CfIwNlYB9yxYizRhAP6byErhj"></script>
 <script>
-import {
-  collection,
-  getDocs,
-  setDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { db } from "@/main.js";
 import TableQuestionItem from "@/components/TableQuestionItem";
@@ -157,11 +150,34 @@ export default {
   },
   methods: {
     async addQuestion() {
+      if(!this.question || !this.answer || !this.image || !this.answerOptionOne || !this.answerOptionTwo || !this.answerOptionThird || !this.answerOptionFour) {
+          console.log("Необходимо заполнить все поля !");
+          return
+      }
+
+
+      grecaptcha.ready(function () {
+        console.log("READY");
+        grecaptcha
+          .execute("6LeFlJ0cAAAAAO9CfIwNlYB9yxYizRhAP6byErhj", {
+            action: "submit",
+          })
+          .then(function (token) {
+            // Отправка картинки в БД
+            const storage = getStorage();
+            const storageRef = ref(storage, `images/${this.image.name}`);
+            // 'file' comes from the Blob or File API
+            uploadBytes(storageRef, this.image).then((snapshot) => {
+              console.log(snapshot);
+              console.log("Файл загружен !");
+            });
+          });
+      });
+
       // Добавление вопроса в список
       const newQuestion = {
         question: this.question,
         answer: this.answer,
-        image: this.image,
         answer_options: [
           this.answerOptionOne,
           this.answerOptionTwo,
@@ -174,7 +190,6 @@ export default {
       // Очистка переменных
       this.question = "";
       this.answer = "";
-      this.image = "";
       this.answerOptionOne = "";
       this.answerOptionTwo = "";
       this.answerOptionThird = "";
@@ -184,26 +199,12 @@ export default {
       let index = this.questions.length;
       await setDoc(doc(db, "questions", String(index)), newQuestion);
     },
-    async removeQuestion(index) {
-      this.questions = this.questions.filter(
-        (q) => index != this.questions.indexOf(q) + 1
-      );
-      await deleteDoc(doc(db, "questions"));
-    },
     changeAnswerInput(e) {
       let value = e.target.value;
       this.answerOptionOne = value;
     },
     previewFiles(e) {
-      let image = e.target.files[0];
-      const storage = getStorage();
-      const storageRef = ref(storage, `images/${image.name}`);
-
-      // 'file' comes from the Blob or File API
-      uploadBytes(storageRef, image).then((snapshot) => {
-        console.log(snapshot);
-        console.log("Uploaded a blob or file!");
-      });
+      this.image = e.target.files[0];
     },
   },
   components: {

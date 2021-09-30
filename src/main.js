@@ -5,6 +5,7 @@ import { initializeApp } from "firebase/app"
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 import { getFirestore } from "firebase/firestore"
 
+
 Vue.config.productionTip = false
 const firebaseApp = initializeApp({
   apiKey: "AIzaSyAFefD9qWpYKcq3JSDI3cx-KF0IGmxQGi4",
@@ -16,7 +17,7 @@ const firebaseApp = initializeApp({
 })
 
 initializeAppCheck(firebaseApp, {
-  provider: new ReCaptchaV3Provider("6LfjyJMcAAAAAAs5T_HmbFk8YsCEOjHwxJij8Icj"),
+  provider: new ReCaptchaV3Provider("6LeFlJ0cAAAAAA0JawJu8cwD3pnc1nffqFPJvZrN"),
   isTokenAutoRefreshEnabled: true
 })
 
