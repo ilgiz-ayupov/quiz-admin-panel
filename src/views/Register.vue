@@ -14,9 +14,6 @@
     >
       <h1 class="h2">Регистрация</h1>
     </div>
-    <div v-if="message" class="alert" :class="status" role="alert">
-      {{ message }}
-    </div>
     <form>
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label"

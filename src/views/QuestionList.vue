@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div v-if="message" class="alert" :class="status" role="alert">
+      {{ message }}
+    </div>
     <div
       class="
         d-flex
@@ -122,10 +125,9 @@
 }
 </style>
 
-<script src="https://www.google.com/recaptcha/api.js?render=6LeFlJ0cAAAAAO9CfIwNlYB9yxYizRhAP6byErhj"></script>
 <script>
 import { collection, getDocs, setDoc, doc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import axios from "axios";
 import { db } from "@/main.js";
 import TableQuestionItem from "@/components/TableQuestionItem";
 
@@ -135,11 +137,14 @@ export default {
       questions: [],
       question: "",
       answer: "",
-      image: "",
+      image: null,
       answerOptionOne: "",
       answerOptionTwo: "",
       answerOptionThird: "",
       answerOptionFour: "",
+
+      message: "",
+      status: "",
     };
   },
   async mounted() {
@@ -150,31 +155,21 @@ export default {
   },
   methods: {
     async addQuestion() {
-      if(!this.question || !this.answer || !this.image || !this.answerOptionOne || !this.answerOptionTwo || !this.answerOptionThird || !this.answerOptionFour) {
-          console.log("Необходимо заполнить все поля !");
-          return
+      if (
+        !this.question ||
+        !this.answer ||
+        !this.answerOptionOne ||
+        !this.answerOptionTwo ||
+        !this.answerOptionThird ||
+        !this.answerOptionFour
+      ) {
+        this.message = "Необходимо заполнить все поля !";
+        this.status = "alert-danger";
+        return;
       }
 
-
-      grecaptcha.ready(function () {
-        console.log("READY");
-        grecaptcha
-          .execute("6LeFlJ0cAAAAAO9CfIwNlYB9yxYizRhAP6byErhj", {
-            action: "submit",
-          })
-          .then(function (token) {
-            // Отправка картинки в БД
-            const storage = getStorage();
-            const storageRef = ref(storage, `images/${this.image.name}`);
-            // 'file' comes from the Blob or File API
-            uploadBytes(storageRef, this.image).then((snapshot) => {
-              console.log(snapshot);
-              console.log("Файл загружен !");
-            });
-          });
-      });
-
       // Добавление вопроса в список
+      let index = this.questions.length + 1;
       const newQuestion = {
         question: this.question,
         answer: this.answer,
@@ -185,8 +180,13 @@ export default {
           this.answerOptionFour,
         ],
       };
-      this.questions.push(newQuestion);
 
+      if (this.image) {
+        this.uploadFile(String(index));
+        newQuestion.image = String(index);
+      }
+
+      this.questions.push(newQuestion);
       // Очистка переменных
       this.question = "";
       this.answer = "";
@@ -194,10 +194,10 @@ export default {
       this.answerOptionTwo = "";
       this.answerOptionThird = "";
       this.answerOptionFour = "";
-
       // Добавление вопроса в БД
-      let index = this.questions.length;
       await setDoc(doc(db, "questions", String(index)), newQuestion);
+      this.message = "Вопрос успешно добавлен !"
+      this.status = "alert-success"
     },
     changeAnswerInput(e) {
       let value = e.target.value;
@@ -205,6 +205,20 @@ export default {
     },
     previewFiles(e) {
       this.image = e.target.files[0];
+    },
+    uploadFile(title) {
+      const formData = new FormData();
+      formData.append("file", this.image);
+      formData.append("title", title);
+
+      axios
+        .post("http://localhost:5000/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => (res))
+        .catch((err) => console.log(err));
     },
   },
   components: {
